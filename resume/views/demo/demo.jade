@@ -46,6 +46,12 @@ html(lang="en")
 
 				br
 				br
+				span(id="videoDiv" class="magic" style="margin-left:20px; display:inline-block; height:30px; width:200px;")
+					img(id="videoImage" class="" style="" src="public/images/ui/video.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Watch Demo Video
+
+				br
+				br
 				span(id="downloaddiv" class="magic" style="margin-left:20px; display:inline-block; height:30px; width:200px;")
 					img(id="downloadAndroidImage" class="" style="" src="public/images/ui/download_android_app_button.png" height="50px" )
 					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Download Android App
@@ -432,5 +438,9 @@ script.
 		}
 	});
 
-
+	$('#videoDiv').click(function(){
+		$.get( "/video", function(data){
+			$('#memberPanelArea').html(data);
+		});
+	});
 //hopper_resume_2014_10_23.docx
