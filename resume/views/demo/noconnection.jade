@@ -1,0 +1,37 @@
+
+script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+
+body(style="background-color: #000000;")
+
+
+#noConnectionDiv(class="magic" style="background-color: red;")
+	center
+		font(color="#ffffff")
+			h1.
+				NO CONNECTION DETECTED
+			br
+			p
+				h5
+				| You have no connection to Android App
+				br
+				| Please start the Android app
+
+
+
+
+
+script.
+	jQuery.fn.center = function () {
+		this.css("position","absolute");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+		$(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+		$(window).scrollLeft()) + "px");
+		return this;
+	}
+	$( document ).ready(function(){
+		$('#noConnectionDiv').center();
+		setTimeout(function() {
+			$('#noConnectionDiv').remove();
+		}, 5000);
+	});

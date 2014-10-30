@@ -1,0 +1,46 @@
+
+
+
+//background-image: url('public/images/ui/cracked_bkg.png');
+body(style="background-color: #000000;")
+
+center
+	div(id="welcomeMainDiv" style="height:400px; width:400px; background-color: #000000; zoom:.7;" class="magic" )
+		font(color="#ffffff")
+			h5
+			p
+				img(style="" src="public/images/ui/crosscommunicationdemo.png" height="50px" )
+				|	should be launched from Chrome
+				br
+				br
+				img(style="" src="public/images/ui/chrome.png" height="50px" )
+				br
+				br
+				|	This app will sense when a browser has connected and will 
+				br
+				|	precede to the menu screen. Please go to url:
+				br
+				- var mString = "http://209.140.28.20:30000/demo"
+				|	!{mString}
+
+
+
+
+
+
+
+
+
+
+script.
+	jQuery.fn.center = function () {
+		this.css("position","absolute");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+		$(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+		$(window).scrollLeft()) + "px");
+		return this;
+	}
+	$( document ).ready(function(){
+		$('#welcomeMainDiv').center();
+	});

@@ -1,0 +1,117 @@
+
+script.
+	//test file with guest login
+	var getUserId =function(){return '#{userId}';}
+	var getDeviceId = function(){return '#{deviceId}';}
+	var getURL = function(){return '#{URL}';}
+	var getWebSocketHost = function(){return '192.168.0.16';}
+
+
+script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+script(type='text/javascript', src='/js/commmanager/commmanager.js')
+
+#hop
+
+h3.
+	Android Test on #{URL}
+br
+h3.
+	userId:#{userId}
+br
+h3.
+	deviceId:#{deviceId}
+br
+h4.
+	uuid:#{new Date().getTime()}
+
+button(class="range-slider" data-slider onclick="send()") send
+
+
+
+
+
+
+
+
+
+script.
+	var commManager = commManagerNameSpace.getCommManagerInstance(
+		{
+			deviceId:!{JSON.stringify(deviceId)},
+			webSocketClient:!{JSON.stringify(webSocketClient)},
+			onReady:function(){
+
+				console.log('onReady');
+				commManager.login(
+					{
+						userName:'bev',
+						password:'4747'
+					}
+				);
+			},
+
+			onLoginSuccess:function(inTransportLayer){
+				console.log('---------------onLoginSuccess-------------------------');
+				console.dir(inTransportLayer);
+
+			},
+
+			onMessage:function(onMessage){
+				console.log('--------------->--onMessage--<---------------');
+				console.dir(onMessage);
+			}
+
+
+
+
+		}
+	);
+	
+	var filterObj = new commManager.FilterObject();
+
+	filterObj.add('nodeEntryEventFromGroupTree2222', function(inMsg, inLocal, inData, inRefObj){
+		$('#hop').html(inData.dataLayer.myValue);
+	});
+
+	//	filterObj.destroy();
+	//8bcc7a20-525c-11e4-a352-b9fc91410762
+	var send = function(){
+		var transportLayer = new TransportLayer();
+		transportLayer
+			.userId(getUserId())
+			.deviceId(getDeviceId())
+			.securityToken('$ecurity4')
+			.transactionId(false)
+		;
+		transportLayer.routingLayer()
+			.type('tokenToTokenUseFilter')
+			.filterKey('filter')
+			.filterValue('god')
+			.add('toDeviceTokenId', '8bcc7a20-525c-11e4-a352-b9fc91410762')
+		;
+		transportLayer.dataLayer()
+			.add('dataTest55key', '55Value')
+
+
+		commManager.sendString(transportLayer.toString());
+		console.log('append output:');
+		console.dir(transportLayer.toJson());
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

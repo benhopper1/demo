@@ -1,0 +1,47 @@
+#widget_0001
+	#widget_0001_contents(class="magic")
+		h3 Current Android App Connections
+		img(class="" style="float:left;" src="public/images/ui/androidPhoneImg.png" )
+		ul(style= "margin-left: 80px;")
+
+
+
+
+
+
+
+script.
+	var devices = !{JSON.stringify(devices)}
+	var deviceTokenIdHash = {};
+	for(index in devices){
+		$("#widget_0001_contents ul").append('<li id="appConnect_' + devices[index].deviceTokenId + '">' + devices[index].caption+ '</li>');
+		deviceTokenIdHash[devices[index].deviceTokenId] = devices[index].deviceTokenId;
+	}
+
+	var AndroidAppConnections = new function(){
+		this.add = function(inCaption, inDeviceTokenId){
+			$("#widget_0001_contents ul").append('<li id="appConnect_' + inDeviceTokenId + '">' + inCaption + '</li>');
+			deviceTokenIdHash[inDeviceTokenId] = inDeviceTokenId;
+		}
+
+		this.reset = function(){
+			$("#widget_0001_contents ul").html('');
+			deviceTokenIdHash = {};
+		}
+
+		this.remove = function(inDeviceTokenId){
+			$('#appConnect_' + inDeviceTokenId).remove();
+			delete deviceTokenIdHash[inDeviceTokenId];
+		}
+
+		this.getDeviceTokenIdFromBackstack = function(){
+			var backstack = Object.keys(deviceTokenIdHash);
+			if(backstack.length > 0){
+				return backstack[backstack.length - 1];
+			}else{
+				return false;
+			}
+		}
+	}();
+
+

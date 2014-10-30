@@ -1,0 +1,43 @@
+{
+	"jsonId":"",
+	"jsonTag":"",
+
+	"resumeType":"",
+
+	"name":"",
+	"phone":"",
+	"email":"",
+
+	"experience":
+		[
+			{
+				"heading":"",
+				"description":"",
+				"detail":
+					[
+						"mydetail1",
+						"mydetail2"
+					]
+			}
+		],
+
+	"technicalSummary":
+		[
+			{
+				"heading":"myHeading1",
+				"detail":"myDetail1"
+			}
+			
+		],
+	"studies":
+	[
+		"dataLine0","dataLine1"
+	],
+
+	"education":
+		[
+			"",
+			""
+		]
+
+}

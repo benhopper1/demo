@@ -1,0 +1,436 @@
+doctype html
+html(lang="en")
+	head
+
+	style(type='text/css').
+		.magic{
+			padding:4px;
+			display:inline-block;
+			cursor:pointer;
+			font:12px/14px Arial, Helvetica, sans-serif;
+			color:#666;
+			border:1px solid #999;
+			background-color:#eee;
+			-moz-border-radius:10px;
+			-webkit-border-radius:10px;
+			-moz-box-shadow:#999 2px 0px 3px;
+			-webkit-box-shadow:#999 2px 0px 3px;
+			margin-bottom:4px;
+		}
+
+	script.
+		var getUserId =function(){return '#{userId}';}
+		var getDeviceId = function(){return '#{deviceId}';}
+		var getURL = function(){return '#{URL}';}
+
+
+
+	script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+
+	script(type='text/javascript', src='/js/commmanager/commmanager.js')
+	script(type='text/javascript', src='/js/clientutil/clientutil.js')
+
+	body(style="background-image: url('public/images/ui/cracked_bkg.png');")
+		center
+			#centerDiv
+
+		#testArea(style="")
+
+
+		#menu
+		#topArea(style="position: relative;")
+			img(id="me" class="magic mouseOverTransmit" style="opacity: 0.4; position: relative; margin-left: -10px ; padding: 0px;" src="public/images/ui/top_bkg_ban.png" height="150px" width="110%")
+			#fff(style="position: relative; top:-180px;left:00px; margin-left: -10px")
+				img(style="" src="public/images/ui/hopper_transp.png" height="175px" )
+				img(style="position: relative; top:-100px;" src="public/images/ui/crosscommunicationdemo.png" height="50px" )
+
+				br
+				br
+				span(id="downloaddiv" class="magic" style="margin-left:20px; display:inline-block; height:30px; width:200px;")
+					img(id="downloadAndroidImage" class="" style="" src="public/images/ui/download_android_app_button.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Download Android App
+				br
+				br
+				span(id="interactiveImageDiv" class="magic" style="margin-left:20px; display:inline-block; height:30px;   width:200px; ")
+					img(id="downloadAndroidImage2" class="" style="" src="public/images/ui/interactimage.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Interactive Imaging
+				br
+				br
+				span(id="interactiveResumeDiv" class="magic" style="margin-left:20px; display:inline-block; height:30px;   width:200px;")
+					img(id="downloadAndroidImage3" class="" style="" src="public/images/ui/register.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Interactive Resume
+				br
+				br
+				span(id="downloadresume" class="magic" style="margin-left:20px; display:inline-block; height:30px;   width:200px;")
+					img(id="downloadresumeimg" class="" style="" src="public/images/ui/register.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Download Resume
+
+				br
+				br
+				span(id="downloaddiv4" class="magic" style="margin-left:20px; display:inline-block; height:30px;   width:200px;")
+					img(id="downloadAndroidImage" class="" style="" src="public/images/ui/meetme.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Contact Information
+
+			#widget_activeAndroidConnects(style="position: absolute; top:10px;left:00px; margin-left: 60%")
+
+
+
+
+		#appArea(style="position: absolute;left:00px;")
+
+		#memberPanelArea
+		#resumeArea
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+script.
+	var clickme0 = function(){
+		console.log('click me 0');
+		commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+			{
+				action:'open'
+			}
+		);
+	}
+	//do guest login auto for demo, no user account for now
+	var commManager = commManagerNameSpace.getCommManagerInstance(
+		{
+			deviceId:!{JSON.stringify(deviceId)},
+			webSocketClient:!{JSON.stringify(webSocketClient)},
+			onReady:function(){
+				console.log('onReady');
+				commManager.login(
+					{
+						userName:'bev',
+						password:'4747'
+					},
+					// onSuccessfulLogin----
+					function(){
+
+					}
+				);
+
+			},
+
+	//#############################################################################################################
+	//-------- S u c c e s s f u l    L o g i n  ------------------------------------------------------------------
+	//#############################################################################################################
+
+
+			onLoginSuccess:function(inTransportLayer_string){
+				console.log('----onLoginSuccess---');
+				console.dir(inTransportLayer_string);
+				// get existing credentials-----------
+				var transportLayer = new TransportLayer();
+					transportLayer
+						.userId(getUserId())
+						.deviceId(getDeviceId())
+						.securityToken('$ecurity4')
+					;
+					transportLayer.routingLayer()
+						.type('transactionToServer')
+						.add('command', 'returnAllCredentialsForUser')
+					;
+					transportLayer.dataLayer()
+						.add('dataTest55key', '55Value')
+
+	//#############################################################################################################
+	//--------Get Credentials From Your Family(userId) of Devices
+	//#############################################################################################################
+
+				commManager.getFamilyDevicesCredentials(function(inCredentialsArray){
+					var filteredCredentialsArray = [];
+					for(index in inCredentialsArray){
+						if(inCredentialsArray[index].deviceType == 'androidApp'){
+							inCredentialsArray[index].caption = inCredentialsArray[index].deviceTokenId;
+							filteredCredentialsArray.push(inCredentialsArray[index]);
+							commManager.setConnectedDeviceTokenId(inCredentialsArray[index].deviceTokenId);
+						}
+					}
+
+					var androidConnects_ajxObj = new clientUtilModule.AjaxJsonPostObject(
+						{
+							url:'widget_activeAndroidConnects'
+						}
+					);
+					androidConnects_ajxObj.send(
+						{
+							devices:filteredCredentialsArray
+						},
+
+						//onAjaxSuccess------
+						function(inResponseText){
+							$('#widget_activeAndroidConnects').html(inResponseText);
+						},
+						//onAjaxFail---------
+						function(){
+							console.log("ajax failed....");
+						}
+					);
+				});
+
+	//#############################################################################################################
+	//--------Setup some Filters ---------------------------------------------------------------------------------
+	//#############################################################################################################
+				var filterObj = new commManager.FilterObject();
+				filterObj.add('widget_memberpanel', function(inMsg, inLocal, inTransportLayer_json, inRefObj){
+					console.log('filterObj widget_memberpanel:')
+					console.dir(inTransportLayer_json);
+					if(inTransportLayer_json.dataLayer.action == 'open'){
+						$('#memberPanelArea').html('<center><img src="public/icons/progress.GIF" style="position: relative; top:-280px;left:00px;"></img></center>');
+						openMemberPanel();
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'close'){
+						console.log('closeing');
+						closeMemberPanel();
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'selectLeft'){
+						console.log('selectLeft');
+						if(typeof memberPanel == 'undefined'){return;}
+						if(MemberPanel_isOpened == true){
+							memberPanel.selectLeft();
+						}
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'selectRight'){
+						console.log('selectRight');
+						if(typeof memberPanel == 'undefined'){return;}
+						if(MemberPanel_isOpened == true){
+							memberPanel.selectRight();
+						}
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'zoomMember'){
+						console.log('zoomMember');
+						if(typeof memberPanel == 'undefined'){return;}
+						if(MemberPanel_isOpened == true){
+							memberPanel.zoomMember(memberPanel.getMemberSelectedIndex(), inTransportLayer_json.dataLayer.zoomValue);
+						}
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'replaceMemberImage'){
+						console.log('replaceMemberImage');
+						if(typeof memberPanel == 'undefined'){return;}
+						if(MemberPanel_isOpened == true){
+							memberPanel.replaceMemberImage(memberPanel.getMemberSelectedIndex(), inTransportLayer_json.dataLayer.newFilePath);
+						}
+					}
+
+				});
+
+					//---------------Filters:Global for resume---------------------------------------
+				var filterObj_resume = new commManager.FilterObject();
+				filterObj_resume.add('widget_resume', function(inMsg, inLocal, inTransportLayer_json, inRefObj){
+
+					if(inTransportLayer_json.dataLayer.action == 'open'){
+						console.log('widget_resume open');
+						openResume();
+					}
+
+					if(inTransportLayer_json.dataLayer.action == 'close'){
+						console.log('widget_resume close');
+						closeResume();
+					}
+
+				});
+
+
+
+
+
+			},
+
+
+	//#############################################################################################################
+	//--------When one of your family devices dis/connect ---------------------------------------------------------
+	//#############################################################################################################
+
+			onFamilyDeviceConnect:function(inMsg, inLocal, inData, inRefObj){
+				AndroidAppConnections.add(inData.routingLayer.fromDeviceTokenId, inData.routingLayer.fromDeviceTokenId);
+				commManager.setConnectedDeviceTokenId(inData.routingLayer.fromDeviceTokenId);
+			},
+
+			onFamilyDeviceDisconnect:function(inMsg, inLocal, inData, inRefObj){
+				AndroidAppConnections.remove(inData.routingLayer.fromDeviceTokenId);
+				console.log('backstack:' + AndroidAppConnections.getDeviceTokenIdFromBackstack());
+				if(commManager.getConnectedDeviceTokenId() == inData.routingLayer.fromDeviceTokenId){
+					commManager.setConnectedDeviceTokenId(AndroidAppConnections.getDeviceTokenIdFromBackstack());
+				}
+			}
+		}
+	);
+
+
+
+
+	var openMemberPanel = function(){
+		if(!(typeof MemberPanel_isOpened == 'undefined' || !(MemberPanel_isOpened == true))){return;}
+		var memberPanel_ajxObj = new clientUtilModule.AjaxJsonPostObject(
+			{
+				url:'widget_memberPanel'
+			}
+		);
+		memberPanel_ajxObj.send(
+			{
+				members:
+					[
+						{
+							name:'Beverly Smith',
+							imageSource:'public/images/characters/face5.jpg'
+						},
+						
+						{
+							name:'Dirty Diana',
+							imageSource:'public/images/characters/face3.jpg'
+						},
+
+						{
+							name:'Android Snack',
+							imageSource:'public/images/characters/dinner.jpg'
+						},
+						{
+							name:'Network',
+							imageSource:'public/images/characters/network.jpg'
+						},
+						{
+							name:'Inner Soul',
+							imageSource:'public/images/characters/linuxinside.jpg'
+						},
+						{
+							name:'Linda Lou',
+							imageSource:'public/images/characters/face2.jpg'
+						},
+						{
+							name:'Sally Sass',
+							imageSource:'public/images/characters/face1.jpg'
+						},
+						{
+							name:'Chrome',
+							imageSource:'public/images/characters/chrome.jpg'
+						}
+					]
+			},
+
+			//onAjaxSuccess------
+			function(inResponseText){
+				console.dir(inResponseText);
+				$('#memberPanelArea').html(inResponseText);
+				commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+					{
+						action:'browserOpenedWidget',
+						members:memberPanel.getMembers()
+					}
+				);
+			},
+			//onAjaxFail---------
+			function(){
+				console.log("ajax failed....");
+			}
+		);
+	}
+
+	var closeMemberPanel = function(){
+		if(typeof memberPanel == 'undefined'){return;}
+		if(MemberPanel_isOpened == true){
+			memberPanel.close();
+		}
+	}
+
+	var openResume = function(){
+		$.get( "/resume", function(data){
+			$("#resumeArea").html(data);
+		});
+	}
+
+	var closeResume = function(){
+		if(typeof resumeObject == 'undefined'){return;}
+		resumeObject.close();
+	}
+
+
+
+
+	$( document ).ready(function(){
+		console.log("ready!!!!!");
+		$('.mouseOverTransmit').mouseenter(
+			function(e){
+				console.log("hello");
+				myImageHover(e);
+		});
+
+		//$('#appArea').append(navigator.userAgent);
+
+		//- $.get( "/welcome", function(data){
+		//- 	$("body").append(data);
+		//- });
+
+	});
+
+	function myImageHover (zEvent) {
+		console.dir(zEvent);
+		if(zEvent.type == 'mouseenter'){
+			console.log ('Entering src: ', zEvent.target.src);
+			//$('.mouseOverTransmit').unbind('mouseenter');
+			zEvent.preventDefault();
+		}else{
+			console.log ('Leaving src: ', zEvent.src);
+		}
+	}
+
+	$('#downloaddiv').click(function(e){
+		e.preventDefault();
+		window.location.href = 'public/download/androidapp/demo.apk';
+		setTimeout(function() {
+			window.location.href = '#{URL}/instruction';
+		}, 5000);
+
+	});
+
+	$('#downloadresume').click(function(e){
+		e.preventDefault();
+		window.location.href = 'public/docs/hopper_resume_2014_10_23.docx';
+	});
+
+	$('#interactiveImageDiv').click(function(e){
+		if(commManager.getConnectedDeviceTokenId()){
+			commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+				{
+					action:'browserRequestOpen'
+				}
+			);
+		}else{
+			$.get( "/noconnection", function(data){
+				$("body").append(data);
+			});
+		}
+	});
+
+	$('#interactiveResumeDiv').click(function(e){
+		if(commManager.getConnectedDeviceTokenId()){
+			commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume', 
+				{
+					action:'browserRequestOpen'
+				}
+			);
+		}else{
+			$.get( "/noconnection", function(data){
+				$("body").append(data);
+			});
+		}
+	});
+
+
+//hopper_resume_2014_10_23.docx

@@ -1,0 +1,119 @@
+script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+
+style.
+	.personData {
+		LINE-HEIGHT:3px;
+	}
+
+	.mainHeading{
+		font-size: 22px;
+		font-weight: bold;
+	}
+
+	.heading{
+		font-size: 17px;
+		padding-left: 40px;
+	}
+
+	.description{
+		font-size: 14px;
+		font-style: italic;
+		padding-left: 40px;
+	}
+
+	.detail{
+		font-size: 13px;
+		font-style: normal;
+		padding-left: 55px;
+	}
+
+	.specialDetail{
+		font-size: 13px;
+		font-style: bold;
+		padding-left: 55px;
+	}
+
+	.detailSpace{
+		LINE-HEIGHT:10px;
+	}
+
+	.postMainHeadingSpace{
+		LINE-HEIGHT:5px;
+	}
+
+	.sectionSpace{
+		LINE-HEIGHT:15px;
+	}
+
+	.uniLineDetail{
+		font-size: 13px;
+		font-style: normal;
+		padding-left: 40px;
+	}
+
+#resume_widget
+	#personArea
+		center
+			h3(id="name" class="personData" style="") #{resumeData.name}
+			h5(id="phone" class="personData" style="") #{resumeData.phone}
+			h5(id="email" class="personData" style="") #{resumeData.email}
+
+	#technicalSummaryArea
+		#technicalSummaryAreaHeading(class="technicalSummaryArea mainHeading" style="") Technical Summary
+		#_br(class="postMainHeadingSpace") &nbsp;
+		- var summaryAreaIndex = 0;
+		each section in resumeData.technicalSummary
+			div(id="technicalSummaryAreaHeading_#{technicalSummaryArea}" class="technicalSummaryArea specialDetail" style="float: left;") #{section.heading}: 
+			div(id="technicalSummaryAreaDetail_#{technicalSummaryArea}" class="technicalSummaryArea detail" style="") #{section.detail}
+			- technicalSummaryArea++
+				#_br(class="detailSpace") &nbsp;
+
+	#_br(class="detailSpace") &nbsp;
+	#experienceArea
+		#experienceAreaHeading(class="experienceArea mainHeading" style="") Professional Experience
+		#_br(class="postMainHeadingSpace") &nbsp;
+		- var experienceAreaIndex = 0;
+		each section in resumeData.experience
+			div(id="experienceAreaHeading_#{experienceAreaIndex}" class="experienceArea heading" style="") #{section.heading}
+			div(id="experienceAreaDescription_#{experienceAreaIndex}" class="experienceArea description" style="") #{section.description}
+				- var experienceDetailAreaIndex = 0;
+				each detailSection in section.detail
+					div(id="experienceAreaDetail_#{experienceAreaIndex}_#{experienceDetailAreaIndex}" class="experienceArea detail" style="") #{detailSection}
+					- experienceDetailAreaIndex++
+			- experienceAreaIndex++
+				#_br(class="detailSpace") &nbsp;
+
+	#studiesArea
+		#studiesAreaHeading(class="studiesArea mainHeading" style="") Technical Studies and Research
+		#_br(class="postMainHeadingSpace") &nbsp;
+		- var studiesAreaIndex = 0;
+		each detail in resumeData.studies
+			div(id="studiesAreaDetail_#{studiesAreaIndex}" class="studiesArea uniLineDetail" style="") #{detail}
+			- studiesAreaIndex++
+		#_br(class="detailSpace") &nbsp;
+
+	#educationArea
+		#educationAreaHeading(class="educationArea mainHeading" style="") Education
+		#_br(class="postMainHeadingSpace") &nbsp;
+		- var educationAreaIndex = 0;
+		each detail in resumeData.education
+			div(id="educationAreaDetail_#{educationAreaIndex}" class="educationArea uniLineDetail" style="") #{detail}
+			- educationAreaIndex++
+		#_br(class="detailSpace") &nbsp;
+
+
+	script.
+		resumeObject = new function(){
+			var _this = this;
+			var data = !{JSON.stringify(resumeData)}
+
+			this.getData = function(){
+				return data;
+			}
+
+
+
+
+
+		}();
+		resumeObject.destroy = function(){delete resumeObject;}

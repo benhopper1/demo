@@ -1,0 +1,286 @@
+
+- var thisId = new Date().getTime();
+div(id="widget_#{thisId}")
+	script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+	link(rel="stylesheet" type="text/css" href="public/js/easyui/themes/default/easyui.css")
+	link(rel="stylesheet" type="text/css" href="public/js/easyui/themes/icon.css")
+	script(type='text/javascript', src='public/js/easyui/jquery.easyui.min.js')
+	link(rel="stylesheet" type="text/css" href="public/js/easyui/jquery.easyui.min.js")
+
+	script(type='text/javascript', src='public/js/scrollto/lib/jquery-scrollto.js')
+
+	#styleSet
+		style.
+			#resume_widget{
+				padding-left: 15px;
+			}
+			#name{
+				font-size: 22px;
+			}
+
+			.mainHeading{
+				font-size: 22px;
+				font-weight: bold;
+			}
+
+			.heading{
+				font-size: 17px;
+				padding-left: 40px;
+			}
+
+			.smallHeading{
+				font-size: 15px;
+				padding-left: 40px;
+				font-weight: bold;
+			}
+
+			.description{
+				font-size: 14px;
+				font-style: italic;
+				padding-left: 40px;
+			}
+
+			.detail{
+				font-size: 13px;
+				font-style: normal;
+				font-weight: normal;
+				padding-left: 55px;
+			}
+
+			.detailSpace{
+				LINE-HEIGHT:10px;
+			}
+
+			.smallDetailSpace{
+				LINE-HEIGHT:5px;
+			}	
+
+			.postMainHeadingSpace{
+				LINE-HEIGHT:5px;
+			}
+
+			.sectionSpace{
+				LINE-HEIGHT:15px;
+			}
+
+			.uniLineDetail{
+				font-size: 13px;
+				font-style: normal;
+				padding-left: 40px;
+			}
+
+	#resume_widget
+		#personArea
+			center
+				div(id="name" class="personData" style="") #{resumeData.name}
+				#_br(class="smallDetailSpace") &nbsp;
+				div(id="phone" class="personData" style="") #{resumeData.phone}
+				#_br(class="smallDetailSpace") &nbsp;
+				div(id="email" class="personData" style="") #{resumeData.email}
+				#_br(class="smallDetailSpace") &nbsp;
+
+		#technicalSummaryArea
+			#technicalSummaryAreaHeading(class="technicalSummaryArea mainHeading" style="") Technical Summary
+			#_br(class="postMainHeadingSpace") &nbsp;
+			- var summaryAreaIndex = 0;
+			each section in resumeData.technicalSummary
+				div(id="technicalSummaryAreaHeading_#{technicalSummaryArea}" class="technicalSummaryArea smallHeading" style="") #{section.heading}
+					div(id="technicalSummaryAreaDetail_#{technicalSummaryArea}" class="technicalSummaryArea detail" style="") #{section.detail}
+				- technicalSummaryArea++
+					#_br(class="smallDetailSpace") &nbsp;
+
+		#_br(class="detailSpace") &nbsp;
+		#experienceArea
+			#experienceAreaHeading(class="experienceArea mainHeading" style="") Professional Experience
+			#_br(class="postMainHeadingSpace") &nbsp;
+			- var experienceAreaIndex = 0;
+			each section in resumeData.experience
+				div(id="experienceAreaHeading_#{experienceAreaIndex}" class="experienceArea heading" style="") #{section.heading}
+				div(id="experienceAreaDescription_#{experienceAreaIndex}" class="experienceArea description" style="") #{section.description}
+					- var experienceDetailAreaIndex = 0;
+					each detailSection in section.detail
+						div(id="experienceAreaDetail_#{experienceAreaIndex}_#{experienceDetailAreaIndex}" class="experienceArea detail" style="") #{detailSection}
+						- experienceDetailAreaIndex++
+				- experienceAreaIndex++
+					#_br(class="detailSpace") &nbsp;
+
+		#studiesArea
+			#studiesAreaHeading(class="studiesArea mainHeading" style="") Technical Studies and Research
+			#_br(class="postMainHeadingSpace") &nbsp;
+			- var studiesAreaIndex = 0;
+			each detail in resumeData.studies
+				div(id="studiesAreaDetail_#{studiesAreaIndex}" class="studiesArea uniLineDetail" style="") #{detail}
+				- studiesAreaIndex++
+			#_br(class="detailSpace") &nbsp;
+
+		#educationArea
+			#educationAreaHeading(class="educationArea mainHeading" style="") Education
+			#_br(class="postMainHeadingSpace") &nbsp;
+			- var educationAreaIndex = 0;
+			each detail in resumeData.education
+				div(id="educationAreaDetail_#{educationAreaIndex}" class="educationArea uniLineDetail" style="") #{detail}
+				- educationAreaIndex++
+			#_br(class="detailSpace") &nbsp;
+	#test
+
+		script.
+			var resumeObject = new function(){
+				var _this = this;
+				var data = !{JSON.stringify(resumeData)}
+				var selectedAreaId;
+
+				//$('#resume_widget').window({
+				$('#widget_' + !{thisId}).window({
+					title:'Benjamin Hopper Resume',
+					pading:10,
+					width:"90%",
+					height:400,
+					modal:true,
+					minimizable:false,
+					maximizable:false,
+					onBeforeClose: function(){
+						console.log('close----');
+						$('#me').ScrollTo({});
+						commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume',
+							{
+								action:'browserRequestClose'
+							}
+						);
+						filterObj_resume.destroy();
+						$('#widget_' + !{thisId}).remove();
+					},
+					onBeforeOpen: function(){}
+				});
+				this.getData = function(){
+					return data;
+				}
+
+				this.close = function(){
+					$('#widget_' + !{thisId}).window('close');
+				}
+
+				this.getTechnicalSummary = function(){
+					var result = 
+						{
+							technicalSummary:data.getTechnicalSummary,
+							html:$('#styleSet').html() + $('#technicalSummaryArea').html()
+						}
+					return result;
+				}
+
+				this.getExperience = function(){
+					var result = 
+						{
+							experience:data.experience,
+							html:$('#styleSet').html() + $('#experienceArea').html()
+						}
+					return result;
+				}
+
+				this.getStudies = function(){
+					var result = 
+						{
+							studies:data.studies,
+							html:$('#styleSet').html() + $('#studiesArea').html()
+						}
+					return result;
+				}
+
+				this.getEducation = function(){
+					var result = 
+						{
+							technicalSummary:data.education,
+							html:$('#styleSet').html() + $('#educationArea').html()
+						}
+					return result;
+				}
+
+				this.selectArea = function(inAreaId){
+					console.log('selectArea:' + inAreaId);
+					if(selectedAreaId == inAreaId){return;}
+
+					selectedAreaId = inAreaId;
+					if(inAreaId == 'technicalSummaryArea'){
+						console.log('exec commm');
+						commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume',
+							{
+								action:'selected',
+								areaId:inAreaId,
+								data:_this.getTechnicalSummary()
+							}
+						);
+					}
+
+					if(inAreaId == 'experienceArea'){
+						commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume',
+							{
+								action:'selected',
+								areaId:inAreaId,
+								data:_this.getExperience()
+							}
+						);
+					}
+
+					if(inAreaId == 'studiesArea'){
+						commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume',
+							{
+								action:'selected',
+								areaId:inAreaId,
+								data:_this.getStudies()
+							}
+						);
+					}
+
+					if(inAreaId == 'educationArea'){
+						commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_resume',
+							{
+								action:'selected',
+								areaId:inAreaId,
+								data:_this.getEducation()
+							}
+						);
+					}
+				}
+
+
+
+				$(document).ready(function(){
+					$('#me').ScrollTo({});
+					_this.selectArea('technicalSummaryArea');
+				});
+
+				//---------------Filters:resume---------------------------------------
+				var filterObj_resume = new commManager.FilterObject();
+				filterObj_resume.add('widget_resume', function(inMsg, inLocal, inTransportLayer_json, inRefObj){
+
+					if(inTransportLayer_json.dataLayer.action == 'scrollToTechSummary'){
+						console.log('technicalSummaryArea');
+						$('#technicalSummaryArea').ScrollTo({});
+						$('#me').ScrollTo({});
+						_this.selectArea('technicalSummaryArea');
+					}
+					if(inTransportLayer_json.dataLayer.action == 'scrollToProExperience'){
+						console.log('scrollToProExperience');
+						$('#me').ScrollTo({});
+						$('#experienceArea').ScrollTo({});
+						_this.selectArea('experienceArea');
+					}
+					if(inTransportLayer_json.dataLayer.action == 'scrollToTechStudRes'){
+						console.log('studiesArea');
+						$('#me').ScrollTo({});
+						$('#studiesArea').ScrollTo({});
+						_this.selectArea('studiesArea');
+					}
+					if(inTransportLayer_json.dataLayer.action == 'scrollToEducation'){
+						console.log('scrollToEducation');
+						$('#me').ScrollTo({});
+						$('#educationArea').ScrollTo({});
+						_this.selectArea('educationArea');
+					}
+
+				});
+				
+
+
+			}();
+			resumeObject.destroy = function(){delete resumeObject;}

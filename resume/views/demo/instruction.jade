@@ -1,0 +1,89 @@
+script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+style(type='text/css').
+	.magic{
+		padding:4px;
+		display:inline-block;
+		cursor:pointer;
+		font:12px/14px Arial, Helvetica, sans-serif;
+		color:#666;
+		border:1px solid #999;
+		background-color:#eee;
+		-moz-border-radius:10px;
+		-webkit-border-radius:10px;
+		-moz-box-shadow:#999 2px 0px 3px;
+		-webkit-box-shadow:#999 2px 0px 3px;
+		margin-bottom:4px;
+	}
+
+//background-image: url('public/images/ui/cracked_bkg.png');
+body(style="background-color: #000000;")
+
+center
+	#videoPanelArea(style="height:600px; width:600px;")
+	div(id="welcomeMainDiv" style="height:400px; width:400px; background-color: #000000; " class="" )
+		font(color="#ffffff")
+			h5
+			p
+				img(style="" src="public/images/ui/crosscommunicationdemo.png" height="50px" )
+				|	should be launched from Chrome
+				br
+				br
+				img(style="" src="public/images/ui/chrome.png" height="50px" )
+				br
+				br
+				|	The Android app will sense when a browser has connected and will 
+				br
+				|	proceed to the menu screen. Please go to url:
+				br
+				br
+				- var mString = "http://209.140.28.20:30000/demo"
+				|	!{mString}
+				br
+				br
+				| on your workstation and if you have not started 
+				| the app on your Android device do so now.
+				br
+				br
+
+				br
+				br
+				div(id="downloaddiv3" class="magic" style="height:30px; width:200px;")
+					img(id="downloadAndroidImage" class="" style="" src="public/images/ui/download_android_app_button.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Download Android App
+				br
+				br
+				br
+				br
+
+				div(id="videoDiv" class="magic" style="height:30px; width:200px;")
+					img(id="downloadAndroidImage" class="" style="" src="public/images/ui/video.png" height="50px" )
+					#caption0(style="float:right; vertical-align:middle; margin-left:10px; margin-right:10px; line-height: 30px;") Video of This Demo
+
+
+
+
+
+
+
+
+
+
+script.
+	jQuery.fn.center = function () {
+		this.css("position","absolute");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+		$(window).scrollLeft()) + "px");
+		return this;
+	}
+	$( document ).ready(function(){
+		$('#welcomeMainDiv').center();
+	});
+
+	$('#downloaddiv3').click(function(e){
+		e.preventDefault();
+		window.location.href = 'public/download/androidapp/demo.apk';
+	});
+	$('#videoDiv').click(function(){
+		window.location.href = '/video';
+	});

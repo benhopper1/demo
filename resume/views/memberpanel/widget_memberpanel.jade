@@ -1,0 +1,192 @@
+//take out once used as component...
+script(type='text/javascript', src='/js/jquery/jquery-2.0.3.min.js')
+
+
+link(rel="stylesheet" type="text/css" href="public/js/easyui/themes/default/easyui.css")
+link(rel="stylesheet" type="text/css" href="public/js/easyui/themes/icon.css")
+script(type='text/javascript', src='public/js/easyui/jquery.easyui.min.js')
+link(rel="stylesheet" type="text/css" href="public/js/easyui/jquery.easyui.min.js")
+
+script(type='text/javascript', src='public/js/scrollto/lib/jquery-scrollto.js')
+
+#panel_memberPanel(style="padding:10px;")
+	table(width="100%" class="tg")
+		tr
+			- var index = 0;
+			each member in members
+				td(width="33%" style="padding:0px 0px; overflow:hidden; text-align:center; vertical-align: middle;")
+
+					table(width="100%" style="padding:0px 0px; overflow:hidden; text-align:center; vertical-align: middle;")
+						tr
+							td(width="33%" style="padding:0px 0px; overflow:hidden; text-align:center; vertical-align: middle;")
+								img(id="memberImageId_#{index}" index="#{index}" class="memberImage" style="border:thin solid;border-color:red" src="#{member.imageSource}" height="125px" )
+						tr
+							td(width="33%" style="padding:0px 0px; overflow:hidden; text-align:center; vertical-align: middle;")
+								xx(id="memberImageName_#{index}" class="memberImageCaption") #{member.name} 
+				- index++
+
+
+
+
+
+	script.
+		var MemberPanel_isOpened = false;
+		var memberPanel = new function(){
+			var members = !{JSON.stringify(members)};
+			var _this = this;
+			//- $('#panel_memberPanel').window('close');
+			$('#panel_memberPanel').window({
+				title:'  Interactive Imaging Panel',
+				width:600,
+				height:400,
+				modal:true,
+				minimizable:false,
+				maximizable:false,
+				onBeforeClose: function(){
+					console.log('closeing window');
+					$('#me').ScrollTo();
+					MemberPanel_isOpened = false;
+					$( ".memberImage" ).each(function(index){
+						$('#memberImageId_' + index).remove();
+					});
+					$( ".memberImageCaption" ).each(function(index){
+						$('#memberImageName_' + index).remove();
+					});
+
+					commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+						{
+							action:'browserClosedWidget'
+						}
+					);
+					$("#memberPanelArea").empty();
+
+
+				},
+				onBeforeOpen: function(){
+					console.log('open window');
+					MemberPanel_isOpened = true;
+				}
+			});
+
+			this.getMembers = function(){
+				return members;
+			}
+
+			this.zoomMember = function(inIndex, inZoomSize){
+				$('#memberImageId_' + inIndex).css("zoom", inZoomSize +'%');
+			}
+
+			this.selectMember = function(inIndex){
+				console.log('selectMember');
+				$( ".memberImage" ).each(function(index){
+					console.log('>>>'+index); //$('#memberImageId_' + '0').id);
+						$('#memberImageId_' + index).css( "border", "none" );
+						$('#memberImageId_' + index).css("border-color", "none");
+				});
+				$('#memberImageId_' + inIndex).css("border", "medium solid");
+				$('#memberImageId_' + inIndex).css("border-color", "red");
+				$('#memberImageId_' + inIndex).ScrollTo({axisYoff:true});
+				$('#me').ScrollTo({axisYoff:true});
+				$("#memberImageName_" + inIndex).text(members[inIndex].name);
+				console.log('imgName:' + $("#memberImageName_" + inIndex).text());
+				//_this.redraw("memberImageName_" + inIndex);
+				//$("#memberImageName_" + inIndex).hide().show(0);
+
+				commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel',
+					{
+						action:'navSelected',
+						index:inIndex,
+						member:members[inIndex],
+						zoomValue: _this.getGetZoom(inIndex)
+					}
+				);
+			}
+
+			var memberSelectedIndex;
+			this.getMemberSelectedIndex = function(){return memberSelectedIndex;}
+			$(document).ready(function(){
+				console.log('ready!!!');
+				_this.selectMember(1);
+				memberSelectedIndex = 1;
+			})
+
+			this.getGetZoom = function(inIndex){
+				var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+				if(is_firefox){
+						return 0;
+					}else{
+						return Math.floor(($('#memberImageId_' + inIndex).css("zoom") - 1) * 100).toString();
+					}
+			}
+
+			this.selectLeft = function(){
+				if(memberSelectedIndex  > 0){
+					_this.selectMember(--memberSelectedIndex);
+				}
+			}
+			this.selectRight = function(){
+				if(memberSelectedIndex  < ($('.memberImage').length - 1)){
+					_this.selectMember(++memberSelectedIndex);
+				}
+			}
+
+
+			this.destroy = function(){
+				$('#panel_memberPanel').remove();
+				delete this;
+			}
+
+			this.close = function(){
+				$('.panel-tool-close').trigger("click");
+			}
+
+			commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+				{
+					action:'open',
+					members:members
+				}
+			);
+
+			this.replaceMemberImage = function(inIndex, inPath){
+				$('#memberImageId_' + inIndex).attr('src', inPath);
+				members[inIndex].imageSource = inPath;
+				members[inIndex].name = "Image Replaced";
+				$("#memberImageName_" + inIndex).text(members[inIndex].name);
+				$('#memberImageId_' + inIndex).load(function(){
+					_this.selectMember(inIndex);
+					console.log('img Loaded!!!');
+					//_this.selectMember(inIndex);
+				});
+				
+
+			}
+
+			this.redraw = function(inId){
+				console.log("redraw");
+				$('#' + inId).html("       wdsdsdssdsdsdsdsd");
+			}
+
+			//setup events--------------------------------------------------------------------------------------
+			$('.memberImage').click(function(e){
+				var memberIndex = $(e.target).attr('index');
+				commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+					{
+						action:'memberImageClick',
+						index:memberIndex,
+						member:members[memberIndex]
+					}
+				);
+			});
+
+			$('.memberImage').mouseover(function(e){
+				var memberIndex = $(e.target).attr('index');
+				commManager.sendCommand(commManager.getConnectedDeviceTokenId(), 'widget_memberpanel', 
+					{
+						action:'memberImageMouseOver',
+						index:memberIndex,
+						member:members[memberIndex]
+					}
+				);
+			});
+
+		}();
